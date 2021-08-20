@@ -5,35 +5,51 @@ const randomIntegerFromInterval = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const makeTransaction = (transaction, onSuccess, onError) => {
-  const delay = randomIntegerFromInterval(200, 500);
-
-  setTimeout(() => {
-    const canProcess = Math.random() > 0.3;
-
-    if (canProcess) {
-      onSuccess(transaction.id, delay);
-    } else {
-      onError(transaction.id);
-    }
-  }, delay);
-};
-
-const logSuccess = (id, time) => {
-  console.log(`Transaction ${id} processed in ${time}ms`);
+const logSuccess = ({ id, time }) => {
+  console.log(`Transaction ${id} processed in ${time} ms`);
 };
 
 const logError = id => {
   console.warn(`Error processing transaction ${id}. Please try again later.`);
 };
 
+
+//Было:
+// const makeTransaction = (transaction, onSuccess, onError) => {
+//   const delay = randomIntegerFromInterval(200, 500);
+
+//   setTimeout(() => {
+//     const canProcess = Math.random() > 0.3;
+
+//     if (canProcess) {
+//       onSuccess(transaction.id, delay);
+//     } else {
+//       onError(transaction.id);
+//     }
+//   }, delay);
+// };
 /*
- * Работает так
+ * Работало так
  */
-makeTransaction({ id: 70, amount: 150 }, logSuccess, logError);
-makeTransaction({ id: 71, amount: 230 }, logSuccess, logError);
-makeTransaction({ id: 72, amount: 75 }, logSuccess, logError);
-makeTransaction({ id: 73, amount: 100 }, logSuccess, logError);
+// makeTransaction({ id: 70, amount: 150 }, logSuccess, logError);
+// makeTransaction({ id: 71, amount: 230 }, logSuccess, logError);
+// makeTransaction({ id: 72, amount: 75 }, logSuccess, logError);
+// makeTransaction({ id: 73, amount: 100 }, logSuccess, logError);
+
+
+//Стало:
+
+const makeTransaction = (transaction) => {
+    const delay = randomIntegerFromInterval(200, 500);
+    const canProcess = Math.random() > 0.3;
+    return new Promise((success, error) => {
+      if (canProcess) { setTimeout(() => success({ id: transaction.id, time: delay }), delay) }
+        else {
+            setTimeout(() => error(transaction.id), delay);
+        }
+    })
+};
+
 /*
  * Должно работать так
  */
