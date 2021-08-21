@@ -5,7 +5,10 @@
 const delay = ms => {
   // Твой код    
     const promise = new Promise((resolved) => {
-      resolved(ms);
+      setTimeout(() => {
+        resolved(ms);
+      }, ms);
+      
     }        
   );
   return promise;
